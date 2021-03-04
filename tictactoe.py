@@ -1,16 +1,9 @@
-# Tic Tac Toe
-# Reference: With modification from http://inventwithpython.com/chapter10.html. 
-
-# TODOs:  
-# 1. Find all TODO items and see whether you can improve the code. 
-#    In most cases (if not all), you can make them more readable/modular.
-# 2. Add/fix function's docstrings (use """ insted of # for function's header
-#    comments)
-
+"""Tic Tac Toe"""
+# Reference: With modification from http://inventwithpython.com/chapter10.html.
 import random
 
 def drawBoard(board):
-    # This function prints out the board that it was passed.
+    """This function prints out the board that it was passed."""
 
     # "board" is a list of 10 strings representing the board (ignore index 0)
     print('   |   |')
@@ -26,8 +19,8 @@ def drawBoard(board):
     print('   |   |')
 
 def inputPlayerLetter():
-    # Lets the player type which letter they want to be.
-    # Returns a list with the player’s letter as the first item, and the computer's letter as the second.
+    """Lets the player type which letter they want to be.
+    Returns a list with the player’s letter as the first item, and the computer's letter as the second."""
     letter = ''
     while not (letter == 'X' or letter == 'O'):
         print('Do you want to be X or O?')
@@ -36,18 +29,18 @@ def inputPlayerLetter():
     # the first element in the list is the player’s letter, the second is the computer's letter.
     if letter == 'X':
         return ['X', 'O']
-    else:                       
+    else:
         return ['O', 'X']
 
 def whoGoesFirst():
-    # Randomly choose the player who goes first.
+    """Randomly choose the player who goes first."""
     if random.randint(0, 1) == 0:
         return 'computer'
-    else:                       
+    else:
         return 'player'
 
 def playAgain():
-    # This function returns True if the player wants to play again, otherwise it returns False.
+    """This function returns True if the player wants to play again, otherwise it returns False."""
     print('Do you want to play again? (yes or no)')
     return input().lower().startswith('y')
 
@@ -55,8 +48,8 @@ def makeMove(board, letter, move):
     board[move] = letter
 
 def isWinner(bo, le):
-    # Given a board and a player’s letter, this function returns True if that player has won.
-    # We use bo instead of board and le instead of letter so we don’t have to type as much.
+    """Given a board and a player’s letter, this function returns True if that player has won.
+    We use bo instead of board and le instead of letter so we don’t have to type as much."""
     return ((bo[7] == le and bo[8] == le and bo[9] == le) or # across the top
     (bo[4] == le and bo[5] == le and bo[6] == le) or # across the middle    # TODO: Fix the indentation of this lines and the following ones.
     (bo[1] == le and bo[2] == le and bo[3] == le) or # across the bottom
@@ -67,42 +60,42 @@ def isWinner(bo, le):
     (bo[9] == le and bo[5] == le and bo[1] == le)) # diagonal
 
 def getBoardCopy(board):
-    # Make a duplicate of the board list and return it the duplicate.
+    """Make a duplicate of the board list and return the duplicate."""
     dupeBoard = []
 
-    for i in range(0, len(board)): # TODO: Clean this mess!
+    for i in range(0, len(board)):
         dupeBoard.append(board[i])
 
     return dupeBoard
 
 def isSpaceFree(board, move):
-    # Return true if the passed move is free on the passed board.
+    """Return true if the passed move is free on the passed board."""
     return board[move] == ' '
 
 def getPlayerMove(board):
-    # Let the player type in their move.
-    move = ' ' # TODO: W0621: Redefining name 'move' from outer scope. Hint: Fix it according to https://stackoverflow.com/a/25000042/81306
+    """Let the player type in their move."""
+    global move
+    move = ' '
     while move not in '1 2 3 4 5 6 7 8 9'.split() or not isSpaceFree(board, int(move)):
         print('What is your next move? (1-9)')
         move = input()
     return int(move)
 
 def chooseRandomMoveFromList(board, movesList):
-    # Returns a valid move from the passed list on the passed board.
-    # Returns None if there is no valid move.
+    """Returns a valid move from the passed list on the passed board.
+    Returns None if there is no valid move."""
     possibleMoves = []
     for i in movesList:
         if isSpaceFree(board, i):
             possibleMoves.append(i)
 
-    if len(possibleMoves) != 0: # TODO: How would you write this pythanically? (You can google for it!)
+    if possibleMoves:
         return random.choice(possibleMoves)
-    else: # TODO: is this 'else' necessary?
-        return None
+    return None
 
-def getComputerMove(board, computerLetter): # TODO: W0621: Redefining name 'computerLetter' from outer scope. Hint: Fix it according to https://stackoverflow.com/a/25000042/81306
-    # Given a board and the computer's letter, determine where to move and return that move.
-    if computerLetter == 'X':
+def getComputerMove(board, compLet):
+    """Given a board and the computer's letter, determine where to move and return that move."""
+    if compLet == 'X':
         playerLetter = 'O'
     else:
         playerLetter = 'X'
@@ -112,8 +105,8 @@ def getComputerMove(board, computerLetter): # TODO: W0621: Redefining name 'comp
     for i in range(1, 10):
         copy = getBoardCopy(board)
         if isSpaceFree(copy, i):
-            makeMove(copy, computerLetter, i)
-            if isWinner(copy, computerLetter):
+            makeMove(copy, compLet, i)
+            if isWinner(copy, compLet):
                 return i
 
     # Check if the player could win on their next move, and block them.
@@ -126,7 +119,7 @@ def getComputerMove(board, computerLetter): # TODO: W0621: Redefining name 'comp
 
     # Try to take one of the corners, if they are free.
     move = chooseRandomMoveFromList(board, [1, 3, 7, 9])
-    if move != None: # TODO: Fix it (Hint: Comparisons to singletons like None should always be done with is or is not, never the equality/inequality operators.)
+    if move is not None:
         return move
 
     # Try to take the center, if it is free.
@@ -137,7 +130,7 @@ def getComputerMove(board, computerLetter): # TODO: W0621: Redefining name 'comp
     return chooseRandomMoveFromList(board, [2, 4, 6, 8])
 
 def isBoardFull(board):
-    # Return True if every space on the board has been taken. Otherwise return False.
+    """Return True if every space on the board has been taken. Otherwise return False."""
     for i in range(1, 10):
         if isSpaceFree(board, i):
             return False
